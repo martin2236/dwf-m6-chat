@@ -18,6 +18,9 @@ app.use(express.static("dist"))
 app.get('*',(req,res)=>{
     res.sendFile(__dirname + '/dist/index.html')
 })
+app.get("/",(req,res)=>{
+    res.status(200);
+})
 
 app.get("/env",(req,res)=>{
     res.json({enviorement: req.body})
