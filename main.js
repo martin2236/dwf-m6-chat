@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+exports.port = void 0;
 var express = require("express");
 var DBCon_1 = require("./DBCon");
 var cors = require("cors");
@@ -9,6 +10,7 @@ console.log(process.env.NODE_ENV);
 var app = express();
 //probar exportar port y asignarlo a la variable API_BASE_URL
 var port = process.env.PORT || 3000;
+exports.port = port;
 app.use(express.json());
 app.use(cors());
 app.use(express.static("dist"));
