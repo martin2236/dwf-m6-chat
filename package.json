@@ -8,7 +8,7 @@
     "dev": "nodemon  --watch './main.ts' --exec 'ts-node ./dev.ts'",
     "build:api":"tsc",
     "build": "npm run build:front && npm run build:api",
-    "serve": "node main.js"
+    "start": "node main.js"
   },
   "dependencies": {
     "@vaadin/router": "^1.7.4",
