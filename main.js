@@ -1,41 +1,42 @@
-import * as express from "express";
-import { roomsCollection, usersCollection, RTDB } from "./DBCon";
-import * as cors from "cors";
-import { nanoid } from "nanoid";
+"use strict";
+exports.__esModule = true;
+exports.port = void 0;
+var express = require("express");
+var DBCon_1 = require("./DBCon");
+var cors = require("cors");
+var nanoid_1 = require("nanoid");
 require("dotenv/config");
 console.log(process.env.NODE_ENV);
-const app = express();
+var app = express();
 //probar exportar port y asignarlo a la variable API_BASE_URL
-const port = process.env.PORT || 3000;
+var port = process.env.PORT || 3000;
+exports.port = port;
 app.use(express.json());
 app.use(cors());
 app.use(express.static("dist"));
-app.get("/", (req, res) => {
-    res.send("funciona");
-});
-app.get('*', (req, res) => {
+app.get('*', function (req, res) {
     res.sendFile(__dirname + '/dist/index.html');
 });
-app.get("/env", (req, res) => {
+app.get("/env", function (req, res) {
     res.json({ enviorement: req.body });
 });
 //SINGUP
-app.post("/signup", (req, res) => {
-    const { email } = req.body;
-    const { userName } = req.body;
-    const { password } = req.body;
+app.post("/signup", function (req, res) {
+    var email = req.body.email;
+    var userName = req.body.userName;
+    var password = req.body.password;
     //buscamos valores en la bd usando la FS where y le pasamos los 3 params para que busque
     if (userName != '' && email != '' && password != '') {
-        usersCollection.where('userName', '==', userName)
+        DBCon_1.usersCollection.where('userName', '==', userName)
             .get()
-            .then(data => {
+            .then(function (data) {
             //comprobamos si el email existe usando .empty y sino existe creamos un usuario
             if (data.empty) {
-                usersCollection.add({
-                    email,
-                    userName,
-                    password
-                }).then(newUserRef => {
+                DBCon_1.usersCollection.add({
+                    email: email,
+                    userName: userName,
+                    password: password
+                }).then(function (newUserRef) {
                     res.json({
                         newUserId: newUserRef.id
                     });
@@ -45,10 +46,10 @@ app.post("/signup", (req, res) => {
                 //si la funcion where encontro un email ya registrado en la BD no crea el usuario
                 //la funcion where siempre debuelve un array por eso siempre hay que indicar la posicion
                 // del dato que queremos usar dentro de ese array
-                const datos = usersCollection.doc(data.docs[0].id);
+                var datos = DBCon_1.usersCollection.doc(data.docs[0].id);
                 datos.get()
-                    .then(user => {
-                    const usuario = user.data();
+                    .then(function (user) {
+                    var usuario = user.data();
                     res.status(400).json({ message: "el nombre de usuario " + usuario.userName + " ya se encuentra registrado" });
                 });
             }
@@ -59,22 +60,22 @@ app.post("/signup", (req, res) => {
     }
 });
 //LOGIN
-app.post("/login", (req, res) => {
+app.post("/login", function (req, res) {
     console.log;
-    const { userName } = req.body;
-    const { password } = req.body;
-    usersCollection.where('userName', '==', userName)
+    var userName = req.body.userName;
+    var password = req.body.password;
+    DBCon_1.usersCollection.where('userName', '==', userName)
         .get()
-        .then(data => {
+        .then(function (data) {
         if (data.empty) {
             res.status(400).json({ message: "not Found " });
         }
         else {
             //comprobar que la contraseña ingresada req.body sea igual a la de la db
-            usersCollection.doc(data.docs[0].id)
+            DBCon_1.usersCollection.doc(data.docs[0].id)
                 .get()
-                .then(user => {
-                const usuario = user.data();
+                .then(function (user) {
+                var usuario = user.data();
                 if (password.toString() === usuario.password) {
                     res.status(200).json({ userId: data.docs[0].id });
                 }
@@ -87,29 +88,29 @@ app.post("/login", (req, res) => {
         }
     });
 });
-app.post("/rooms", (req, res) => {
-    const { userId } = req.body;
+app.post("/rooms", function (req, res) {
+    var userId = req.body.userId;
     //verifica que la collection con el id del usuario existe, si existe crea una sala en la rtdb que va atener el nombre del id del usuario
     //y una propiedad para los mensajes
     //IMPORTANTE convertir el valor de userid a string para que no falle
-    usersCollection.doc(userId.toString())
+    DBCon_1.usersCollection.doc(userId.toString())
         .get()
-        .then(doc => {
+        .then(function (doc) {
         if (doc.exists) {
             // al trabajar con la rtdb siempre crear una referencia        
-            const roomRef = RTDB.ref("rooms/" + nanoid());
-            roomRef.set({
+            var roomRef_1 = DBCon_1.RTDB.ref("rooms/" + (0, nanoid_1.nanoid)());
+            roomRef_1.set({
                 messages: [],
                 owner: userId
-            }).then(() => {
+            }).then(function () {
                 // una vez que creamos la sala en la rtdb creamos el doc dentro de firestore que va  a tener 
                 // el id amigable 
-                const longId = roomRef.key;
-                const roomId = 1000 + Math.floor(Math.random() * 999);
+                var longId = roomRef_1.key;
+                var roomId = 1000 + Math.floor(Math.random() * 999);
                 //IMPORTANTE convertir el id a string        
-                roomsCollection.doc(roomId.toString()).set({
+                DBCon_1.roomsCollection.doc(roomId.toString()).set({
                     rtdbRoomId: longId
-                }).then(() => {
+                }).then(function () {
                     res.json({
                         roomId: roomId.toString()
                     });
@@ -123,19 +124,19 @@ app.post("/rooms", (req, res) => {
 });
 // para poder obtener el id dinamico que nos pasan como parametro el metodo get
 // a diferencia del metodo post que usa el req.body utiliza el req.query
-app.get("/rooms/:roomid", (req, res) => {
-    const { userid } = req.query;
-    const { roomid } = req.params;
-    usersCollection
+app.get("/rooms/:roomid", function (req, res) {
+    var userid = req.query.userid;
+    var roomid = req.params.roomid;
+    DBCon_1.usersCollection
         .doc(userid.toString())
         .get()
-        .then((doc) => {
+        .then(function (doc) {
         if (doc.exists) {
-            roomsCollection.doc(roomid)
+            DBCon_1.roomsCollection.doc(roomid)
                 .get()
-                .then(snap => {
-                const data = snap.data();
-                res.json({ data });
+                .then(function (snap) {
+                var data = snap.data();
+                res.json({ data: data });
             });
         }
         else {
@@ -143,22 +144,21 @@ app.get("/rooms/:roomid", (req, res) => {
         }
     });
 });
-app.post("/messages", (req, res) => {
+app.post("/messages", function (req, res) {
     console.log(req.body);
-    const { from } = req.body;
-    const { message } = req.body;
-    const { roomId } = req.body;
+    var from = req.body.from;
+    var message = req.body.message;
+    var roomId = req.body.roomId;
     //hacemos la referencia a la parte de la rtbd a la que quermos acceder
-    const chatRoomRef = RTDB.ref("/rooms/" + roomId + "/messages");
+    var chatRoomRef = DBCon_1.RTDB.ref("/rooms/" + roomId + "/messages");
     //hacemos el push del req.boy que trar los datos del state en el front
     chatRoomRef.push({
-        from,
-        message
+        from: from,
+        message: message
     }, function () {
         res.json("funciona");
     });
 });
-app.listen(port, () => {
-    console.log(`http://localhost:${port}`);
+app.listen(port, function () {
+    console.log("http://localhost:".concat(port));
 });
-export { port };
