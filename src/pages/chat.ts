@@ -1,6 +1,5 @@
 import { Message } from "../state"
 import { state } from "../state"
-const send = require("url:../img/send.png");
 export class Chat extends HTMLElement{
 shadow:ShadowRoot
 usuario:string
@@ -62,7 +61,7 @@ constructor(){
         </div>
         <form class="chat2">
         <input class="msn" type="text" name="mensaje"></input>
-        <button class="send"><img class= "opcion"  src="${send} " alt="send"></button>
+        <button class="send">enviar</button>
         </form>
         </div>
        `   
