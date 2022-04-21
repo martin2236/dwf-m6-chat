@@ -19,7 +19,7 @@ app.get('*',(req,res)=>{
     res.sendFile(__dirname + '/dist/index.html')
 })
 app.get("/",(req,res)=>{
-    res.status(200);
+    res.json({message:"funciona"})
 })
 
 app.get("/env",(req,res)=>{
