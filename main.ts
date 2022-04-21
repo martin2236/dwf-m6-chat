@@ -3,6 +3,7 @@ import { roomsCollection, usersCollection, RTDB } from "./DBCon";
 import * as cors from "cors";
 import { firestore } from "firebase-admin";
 import {nanoid} from "nanoid";
+import { serverTimestamp } from "firebase/database";
 require ("dotenv/config");
 console.log(process.env.NODE_ENV);
 
@@ -15,6 +16,9 @@ app.use(express.static("dist"))
 
 app.get("/",(req,res)=>{
     res.send("funciona")
+})
+app.get('*',(req,res)=>{
+    res.sendFile(__dirname + '/dist/index.html')
 })
 
 app.get("/env",(req,res)=>{
