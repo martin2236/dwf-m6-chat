@@ -2,6 +2,7 @@
   "name": "chatapp",
   "version": "1.0.0",
   "licence": "MIT",
+  "type": "commonjs",
   "scripts": {
     "dev:front": "parcel serve ./src/index.html",
     "build:front": "parcel build ./src/index.html",
