@@ -17,7 +17,7 @@ export class Home extends HTMLElement{
         const login = this.shadow.querySelector(".login")
         login.addEventListener("click",(e)=>{
               e.preventDefault();
-                Router.go("/login")
+                Router.go("login")
         })
         const style = document.createElement("style")
         style.innerHTML = `
