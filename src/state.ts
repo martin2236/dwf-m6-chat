@@ -1,5 +1,5 @@
 
-const API_BASE_URL = 'https://chat-prueba1-dwf6.herokuapp.com/';
+const API_BASE_URL = 'https://chat-prueba1-dwf6.herokuapp.com';
 import { RTDB } from './rtdb';
 import { ref, set, onValue } from "firebase/database";
 import map from "lodash/map"
